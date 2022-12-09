@@ -16,15 +16,12 @@ class Wallet {
     return this.publicKey;
   }
 
-  // Wallet can only handle the dataSharingReq and dataRetrieval
+  // 
 
-  createDataSharingReqMsg(query) {
-    return new Message({ ...query, flRound: 1 }, this, MSG_TYPE.dataSharingReq);
+  createTransaction(data) {
+    return new Message({ ...data }, this, MSG_TYPE.transaction);
   }
 
-  createDataRetrievalMsg(query) {
-    return new Message({ ...query }, this, MSG_TYPE.dataRetrieval);
-  }
 }
 
 module.exports = Wallet;
