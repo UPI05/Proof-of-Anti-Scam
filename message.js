@@ -44,6 +44,42 @@ class Message {
       this.hash = utils.hash(hashInpStr + this.IPHash);
     }
 
+    // Block with IP request
+
+    if (msgType === MSG_TYPE.blockWithIPReq) {
+      this.prepareReqMsg = materials.prepareReqMsg || "";
+      this.hash = utils.hash(hashInpStr + this.prepareReqMsg);
+    }
+
+    // Block Commit
+
+    if (msgType === MSG_TYPE.blockCommit) {
+      this.IP = materials.IP || "";
+      this.messages = materials.messages || [];
+      this.hash = utils.hash(hashInpStr + this.IP + this.messages);
+    }
+
+    // Local blockCommit
+
+    if (msgType === MSG_TYPE.localBlockCommit) {
+      this.IP = materials.IP || "";
+      this.messages = materials.messages || [];
+      this.hash = utils.hash(hashInpStr + this.IP + this.messages);
+    }
+
+    // Heart beat request
+
+    if (msgType === MSG_TYPE.heartBeatReq) {
+      this.hash = utils.hash(hashInpStr);
+    }
+
+    // Heart beat response
+
+    if (msgType === MSG_TYPE.heartBeatRes) {
+      this.heartBeatReq = materials.heartBeatReq || {};
+      this.hash = utils.hash(hashInpStr + this.heartBeatReq);
+    }
+
     // Signature
     this.signature =
       msgType === MSG_TYPE.genesisBlock
@@ -60,6 +96,18 @@ class Message {
 
       case MSG_TYPE.prepareReqMsg:
         return utils.hash(hashInpStr + msg.IPHash) === msg.hash;
+
+      case MSG_TYPE.blockWithIPReq:
+        return utils.hash(hashInpStr + msg.prepareReqMsg) === msg.hash;
+
+      case MSG_TYPE.blockCommit:
+        return utils.hash(hashInpStr + msg.IP + msg.messages) === msg.hash;
+
+      case MSG_TYPE.heartBeatReq:
+        return utils.hash(hashInpStr) === msg.hash;
+
+      case MSG_TYPE.heartBeatRes:
+        return utils.hash(hashInpStr + msg.heartBeatReq) === msg.hash;
 
       default:
         console.info("oops");
@@ -102,7 +150,6 @@ class Message {
 
 
     // Block with IP request
-
 
 
 

@@ -62,7 +62,7 @@ class MessagePool {
   }
 
   clearPrepareMsg() {
-    for (const msg of this.messags) {
+    for (const msg of this.messages) {
       if (
         (msg.msgType === MSG_TYPE.prepareReqMsg ||
           msg.msgType === MSG_TYPE.blockWithIPReq) &&
@@ -73,12 +73,28 @@ class MessagePool {
   }
 
   removeFrontPrepareMsg() {
-    for (const msg of this.messags) {
+    for (const msg of this.messages) {
       if (msg.msgType === MSG_TYPE.prepareReqMsg && !msg.isSpent) {
         msg.isSpent = true;
         break;
       }
     }
+  }
+
+  getBlockWithIPReq(prepareReqMsg) {
+    let res = [];
+    for (const msg of this.messages) {
+      if (msg.msgType === MSG_TYPE.blockWithIPReq && !msg.isSpent && msg.prepareReqMsg === prepareReqMsg) res.push(msg);
+    }
+    return res;
+  }
+
+  getHeartBeatResMsgs(heartBeatReq) {
+    let res = [];
+    for (const msg of this.messages) {
+      if (msg.msgType === MSG_TYPE.heartBeatRes && !msg.isSpent && msg.heartBeatReq === heartBeatReq) res.push(msg);
+    }
+    return res;
   }
 }
 

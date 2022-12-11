@@ -7,6 +7,7 @@ const {
   PREPARE_MSG_TIMEOUT,
   DEBUG,
   NUM_OF_TXS_IN_A_BLOCK,
+  HEART_BEAT_TIMEOUT,
 } = require("./config.js");
 
 const Peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
@@ -131,6 +132,13 @@ class P2pServer {
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
+
+            let blockWithIPReq = new Message(
+              { prepareReqMsg: msg },
+              this.wallet,
+              MSG_TYPE.blockWithIPReq
+            );
+            this.broadcastMessage(blockWithIPReq);
           }
 
           break;
@@ -142,29 +150,87 @@ class P2pServer {
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
-            if (msg.toWhom === this.wallet.getPublicKey()) {
-              let localBlockCommit = this.messagePool.getLocalBlockCommit();
-              localBlockCommit = localBlockCommit[localBlockCommit.length - 1];
-              localBlockCommit.msgType = MSG_TYPE.blockCommit;
-              this.broadcastMessage(localBlockCommit);
+            let localBlockCommits =
+                    this.messagePool.getLocalBlockCommit();
+            if (localBlockCommits.length === 0) break;
+            if (msg.prepareReqMsg.publicKey === this.wallet.getPublicKey()) {
+              let countBlockWithIPReq = this.messagePool.getBlockWithIPReq(
+                msg.prepareReqMsg
+              ).length;
+
+              let heartBeatReq = new Message(
+                {},
+                this.wallet,
+                MSG_TYPE.heartBeatReq
+              );
+              this.broadcastMessage(heartBeatReq);
+
+              setTimeout(() => {
+                let heartBeatResMsgs =
+                  this.messagePool.getHeartBeatResMsgs(heartBeatReq);
+                if (countBlockWithIPReq >= heartBeatResMsgs.length * 0.5) {
+                  let blockCommit = new Message({
+                    IP: localBlockCommits[localBlockCommits.length - 1].IP,
+                    messages:
+                      localBlockCommits[localBlockCommits.length - 1].messages,
+                  }, this.wallet, MSG_TYPE.blockCommit);
+                  localBlockCommits[localBlockCommits.length - 1].isSpent = true;
+                  this.broadcastMessage(blockCommit);
+                  //this.blockchain.addBlock(blockCommit);
+                }
+              }, HEART_BEAT_TIMEOUT * 1000);
             }
           }
+          break;
         case MSG_TYPE.blockCommit:
           let prepareMsgs = this.messagePool.getPrepareMsg();
+          if (prepareMsgs.length === 0) break;
           if (
             !this.messagePool.messageExistsWithHash(msg) &&
             this.messagePool.verifyMessage(msg, this.blockchain) &&
-            msg.publicKey === prepareMsgs[prepareMsgs.length - 1].publicKey
+            msg.publicKey === prepareMsgs[0].publicKey
           ) {
-            this.blockchain.push(msg);
+            this.blockchain.addBlock(msg);
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
+
+            console.info("done!");
+            console.info(msg);
 
             // Need to reset genblock
 
             this.messagePool.clearPrepareMsg();
           }
+          break;
+        case MSG_TYPE.heartBeatReq:
+          if (
+            !this.messagePool.messageExistsWithHash(msg) &&
+            this.messagePool.verifyMessage(msg, this.blockchain)
+          ) {
+            this.isSpent = false;
+            this.messagePool.addMessage(msg);
+            this.broadcastMessage(msg);
+
+            let heartBeatRes = new Message(
+              { heartBeatReq: msg },
+              this.wallet,
+              MSG_TYPE.heartBeatRes
+            );
+            this.broadcastMessage(heartBeatRes);
+          }
+          break;
+
+        case MSG_TYPE.heartBeatRes:
+          if (
+            !this.messagePool.messageExistsWithHash(msg) &&
+            this.messagePool.verifyMessage(msg, this.blockchain)
+          ) {
+            this.isSpent = false;
+            this.messagePool.addMessage(msg);
+            this.broadcastMessage(msg);
+          }
+          break;
         default:
           console.info("oops!");
       }

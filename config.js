@@ -12,7 +12,9 @@ const MSG_TYPE = {
   prepareReqMsg: "Prepare request message",
   blockWithIPReq: "Block with IP request",
   localBlockCommit: "Local block commit message",
-  blockCommit: "Block commit message"
+  blockCommit: "Block commit message",
+  heartBeatReq: "Heart beat request",
+  heartBeatRes: "Heart beat response"
 };
 
 //
@@ -21,6 +23,7 @@ const NUM_OF_KNOWN_BIT = 5;
 const NUM_OF_TXS_IN_A_BLOCK = 5;
 const BLOCK_TIMEOUT = 600; // second
 const PREPARE_MSG_TIMEOUT = 5;
+const HEART_BEAT_TIMEOUT = 1;
 
 //
 const DEBUG = false;
@@ -36,5 +39,6 @@ module.exports = {
   PREPARE_MSG_TIMEOUT,
   DEBUG,
   NUM_OF_KNOWN_BIT,
-  NUM_OF_TXS_IN_A_BLOCK
+  NUM_OF_TXS_IN_A_BLOCK,
+  HEART_BEAT_TIMEOUT
 };
