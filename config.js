@@ -23,7 +23,7 @@ const NUM_OF_KNOWN_BIT = 5;
 const NUM_OF_TXS_IN_A_BLOCK = 5;
 const BLOCK_TIMEOUT = 600; // second
 const PREPARE_MSG_TIMEOUT = 5;
-const HEART_BEAT_TIMEOUT = 1;
+const HEART_BEAT_TIMEOUT = 0.05;
 
 //
 const DEBUG = false;

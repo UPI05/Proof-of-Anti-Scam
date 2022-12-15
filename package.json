@@ -5,7 +5,15 @@
   "main": "index.js",
   "scripts": {
     "node1": "SECRET='NODE1' HTTP_PORT=3000 P2P_PORT=5000 node app.js",
-    "node2": "SECRET='NODE2' HTTP_PORT=3001 P2P_PORT=5001 PEERS='ws://localhost:5000' node app.js"
+    "node2": "SECRET='NODE2' HTTP_PORT=3001 P2P_PORT=5001 PEERS='ws://localhost:5000' node app.js",
+    "node3": "SECRET='NODE3' HTTP_PORT=3002 P2P_PORT=5002 PEERS='ws://localhost:5000,ws://localhost:5001' node app.js",
+    "node4": "SECRET='NODE4' HTTP_PORT=3003 P2P_PORT=5003 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002' node app.js",
+    "node5": "SECRET='NODE5' HTTP_PORT=3004 P2P_PORT=5004 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003' node app.js",
+    "node6": "SECRET='NODE6' HTTP_PORT=3005 P2P_PORT=5005 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003,ws://localhost:5004' node app.js",
+    "node7": "SECRET='NODE7' HTTP_PORT=3006 P2P_PORT=5006 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003,ws://localhost:5004,ws://localhost:5005' node app.js",
+    "node8": "SECRET='NODE8' HTTP_PORT=3007 P2P_PORT=5007 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003,ws://localhost:5004,ws://localhost:5005,ws://localhost:5006' node app.js",
+    "node9": "SECRET='NODE9' HTTP_PORT=3008 P2P_PORT=5008 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003,ws://localhost:5004,ws://localhost:5005,ws://localhost:5006,ws://localhost:5007' node app.js",
+    "node10": "SECRET='NODE10' HTTP_PORT=3009 P2P_PORT=5009 PEERS='ws://localhost:5000,ws://localhost:5001,ws://localhost:5002,ws://localhost:5003,ws://localhost:5004,ws://localhost:5005,ws://localhost:5006,ws://localhost:5007,ws://localhost:5008' node app.js"
   },
   "author": "Hieu Vo",
   "license": "ISC",

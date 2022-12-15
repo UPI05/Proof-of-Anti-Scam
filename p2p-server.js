@@ -94,7 +94,6 @@ class P2pServer {
             !this.messagePool.messageExistsWithHash(msg) &&
             this.messagePool.verifyMessage(msg, this.blockchain)
           ) {
-            console.info("received tx");
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
@@ -105,6 +104,8 @@ class P2pServer {
               let foundIP = await this.blockchain.bruteforceIPPattern(
                 this.blockchain.generateIPPattern()
               );
+              if (this.wallet.getPublicKey() !== '5864f1e7d7e37e95882b398c21ca29b314ebfc6ea1286c8dc1201214cc0d0686') break;
+              console.info(`bg ${Date.now()}`);
               let prepareRequestMsg = new Message(
                 { IPHash: utils.hash(foundIP) },
                 this.wallet,
@@ -150,9 +151,7 @@ class P2pServer {
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
-            let localBlockCommits =
-                    this.messagePool.getLocalBlockCommit();
-            if (localBlockCommits.length === 0) break;
+            
             if (msg.prepareReqMsg.publicKey === this.wallet.getPublicKey()) {
               let countBlockWithIPReq = this.messagePool.getBlockWithIPReq(
                 msg.prepareReqMsg
@@ -169,6 +168,10 @@ class P2pServer {
                 let heartBeatResMsgs =
                   this.messagePool.getHeartBeatResMsgs(heartBeatReq);
                 if (countBlockWithIPReq >= heartBeatResMsgs.length * 0.5) {
+                  let localBlockCommits =
+                    this.messagePool.getLocalBlockCommit();
+                  if (localBlockCommits.length === 0) return;
+
                   let blockCommit = new Message({
                     IP: localBlockCommits[localBlockCommits.length - 1].IP,
                     messages:
@@ -194,9 +197,8 @@ class P2pServer {
             msg.isSpent = false;
             this.messagePool.addMessage(msg);
             this.broadcastMessage(msg);
-
+            console.info(Date.now());
             console.info("done!");
-            console.info(msg);
 
             // Need to reset genblock
 
